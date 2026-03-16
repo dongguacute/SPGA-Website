@@ -1,0 +1,72 @@
+{
+  "animation": "bottom_to_top_stack",
+  "description": "Tiles in the same group should move upward together and appear simultaneously.",
+  "groups": [
+    {
+      "row": 5,
+      "tiles_move_up_together": [
+        "tile_r5_c0.png",
+        "tile_r5_c1.png",
+        "tile_r5_c2.png",
+        "tile_r5_c3.png",
+        "tile_r5_c4.png",
+        "tile_r5_c5.png"
+      ]
+    },
+    {
+      "row": 4,
+      "tiles_move_up_together": [
+        "tile_r4_c0.png",
+        "tile_r4_c1.png",
+        "tile_r4_c2.png",
+        "tile_r4_c3.png",
+        "tile_r4_c4.png",
+        "tile_r4_c5.png"
+      ]
+    },
+    {
+      "row": 3,
+      "tiles_move_up_together": [
+        "tile_r3_c0.png",
+        "tile_r3_c1.png",
+        "tile_r3_c2.png",
+        "tile_r3_c3.png",
+        "tile_r3_c4.png",
+        "tile_r3_c5.png"
+      ]
+    },
+    {
+      "row": 2,
+      "tiles_move_up_together": [
+        "tile_r2_c0.png",
+        "tile_r2_c1.png",
+        "tile_r2_c2.png",
+        "tile_r2_c3.png",
+        "tile_r2_c4.png",
+        "tile_r2_c5.png"
+      ]
+    },
+    {
+      "row": 1,
+      "tiles_move_up_together": [
+        "tile_r1_c0.png",
+        "tile_r1_c1.png",
+        "tile_r1_c2.png",
+        "tile_r1_c3.png",
+        "tile_r1_c4.png",
+        "tile_r1_c5.png"
+      ]
+    },
+    {
+      "row": 0,
+      "tiles_move_up_together": [
+        "tile_r0_c0.png",
+        "tile_r0_c1.png",
+        "tile_r0_c2.png",
+        "tile_r0_c3.png",
+        "tile_r0_c4.png",
+        "tile_r0_c5.png"
+      ]
+    }
+  ]
+}

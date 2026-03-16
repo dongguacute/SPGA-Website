@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
+import gsap from "gsap";
+import contentRevealConfig from "../assets/home/content_reveal_order.json";
 
 // 静态导入所有 tile 图片
 import tile_r0_c0 from "../assets/home/tile_r0_c0.png";
@@ -88,6 +90,20 @@ interface TileData {
   distance_to_tree: number;
 }
 
+interface ContentGroup {
+  stage: number;
+  name: string;
+  tiles: string[];
+}
+
+interface ContentRevealConfig {
+  animation: string;
+  description: string;
+  groups: ContentGroup[];
+}
+
+const typedContentConfig = contentRevealConfig as ContentRevealConfig;
+
 interface MaskRevealProps {
   revealOrder: TileData[];
   gridCols?: number;
@@ -103,17 +119,67 @@ export default function MaskReveal({
   tileWidth = 341,
   tileHeight = 214,
 }: MaskRevealProps) {
-  const [isRevealed, setIsRevealed] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tilesRef = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  // 根据配置文件构建 tile 到 stage 的映射
+  const tileStageMap: Record<string, number> = {};
+  typedContentConfig.groups.forEach((group) => {
+    group.tiles.forEach((tileName) => {
+      tileStageMap[tileName] = group.stage;
+    });
+  });
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
+    // 等待 DOM 准备好后开始动画
     const timer = setTimeout(() => {
-      setIsRevealed(true);
+      // 按 stage 分组 tiles
+      const stageTiles: Record<number, HTMLDivElement[]> = {};
+      tilesRef.current.forEach((el, fileName) => {
+        const stage = tileStageMap[fileName] ?? 1;
+        if (!stageTiles[stage]) stageTiles[stage] = [];
+        stageTiles[stage].push(el);
+      });
+
+      // 创建 GSAP timeline
+      const tl = gsap.timeline();
+
+      // 按 stage 顺序动画
+      Object.keys(stageTiles)
+        .map(Number)
+        .sort((a, b) => a - b)
+        .forEach((stage) => {
+          tl.to(
+            stageTiles[stage],
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              ease: "power3.out",
+              stagger: 0.03, // 同组内轻微错开，更自然
+            },
+            stage === 1 ? 0 : "-=0.4" // stage 1 立即开始，后续 stage 稍微重叠
+          );
+        });
     }, 300);
+
     return () => clearTimeout(timer);
-  }, []);
+  }, [tileStageMap]);
+
+  // 设置 tile ref 的辅助函数
+  const setTileRef = (fileName: string) => (el: HTMLDivElement | null) => {
+    if (el) {
+      tilesRef.current.set(fileName, el);
+    } else {
+      tilesRef.current.delete(fileName);
+    }
+  };
 
   return (
     <div
+      ref={containerRef}
       className="relative overflow-hidden"
       style={{
         width: "100%",
@@ -130,23 +196,20 @@ export default function MaskReveal({
           height: "100%",
         }}
       >
-        {revealOrder.map((tile, index) => {
+        {revealOrder.map((tile) => {
           const imageName = tile.file.replace(".png", "");
           const imageSrc = tileImages[imageName];
 
           return (
             <div
               key={tile.file}
+              ref={setTileRef(tile.file)}
               className="relative w-full h-full overflow-hidden"
               style={{
                 gridRow: tile.row + 1,
                 gridColumn: tile.col + 1,
-                opacity: isRevealed ? 1 : 0,
-                transform: isRevealed ? "scale(1)" : "scale(0.8)",
-                transitionDelay: `${index * 50}ms`,
-                transitionDuration: "600ms",
-                transitionProperty: "opacity, transform",
-                transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+                opacity: 0,
+                transform: "translateY(40px)",
               }}
             >
               {imageSrc && (
