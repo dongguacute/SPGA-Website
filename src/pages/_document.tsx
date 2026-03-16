@@ -5,7 +5,6 @@ export default function Document() {
     <Html lang="zh-CN" suppressHydrationWarning>
       <Head>
         <link rel="icon" href="/logo.png" />
-        <title>SPGA</title>
       </Head>
       <body className="antialiased" suppressHydrationWarning>
         <Main />

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useMemo, useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import gsap from "gsap";
-import revealConfig from "@/assets/home/reveal_config.json";
 
 // 导入背景图片
 import backgroundImage from "@/assets/home/background.jpg";
@@ -104,7 +103,74 @@ interface RevealConfig {
   contentStages: ContentStage[];
 }
 
-const typedRevealConfig = revealConfig as RevealConfig;
+const revealConfig: RevealConfig = {
+  tiles: [
+    { file: "tile_r2_c3.jpg", row: 2, col: 3, center_x: 1193.5, center_y: 535.0, distance_to_tree: 169.56514972127968 },
+    { file: "tile_r2_c2.jpg", row: 2, col: 2, center_x: 852.5, center_y: 535.0, distance_to_tree: 171.56439024459593 },
+    { file: "tile_r3_c3.jpg", row: 3, col: 3, center_x: 1193.5, center_y: 749.0, distance_to_tree: 269.32645618282663 },
+    { file: "tile_r3_c2.jpg", row: 3, col: 2, center_x: 852.5, center_y: 749.0, distance_to_tree: 270.5896154696259 },
+    { file: "tile_r1_c3.jpg", row: 1, col: 3, center_x: 1193.5, center_y: 321.0, distance_to_tree: 276.69466926560034 },
+    { file: "tile_r1_c2.jpg", row: 1, col: 2, center_x: 852.5, center_y: 321.0, distance_to_tree: 277.92434222284305 },
+    { file: "tile_r4_c3.jpg", row: 4, col: 3, center_x: 1193.5, center_y: 963.0, distance_to_tree: 455.9749335215699 },
+    { file: "tile_r4_c2.jpg", row: 4, col: 2, center_x: 852.5, center_y: 963.0, distance_to_tree: 456.7221693765259 },
+    { file: "tile_r0_c3.jpg", row: 0, col: 3, center_x: 1193.5, center_y: 107.0, distance_to_tree: 464.7144714768413 },
+    { file: "tile_r0_c2.jpg", row: 0, col: 2, center_x: 852.5, center_y: 107.0, distance_to_tree: 465.44767697347027 },
+    { file: "tile_r2_c4.jpg", row: 2, col: 4, center_x: 1534.5, center_y: 535.0, distance_to_tree: 510.5216351928682 },
+    { file: "tile_r2_c1.jpg", row: 2, col: 1, center_x: 511.5, center_y: 535.0, distance_to_tree: 512.5215507664044 },
+    { file: "tile_r3_c4.jpg", row: 3, col: 4, center_x: 1534.5, center_y: 749.0, distance_to_tree: 551.7397393699316 },
+    { file: "tile_r3_c1.jpg", row: 3, col: 1, center_x: 511.5, center_y: 749.0, distance_to_tree: 553.5907694317166 },
+    { file: "tile_r1_c4.jpg", row: 1, col: 4, center_x: 1534.5, center_y: 321.0, distance_to_tree: 555.3736940115186 },
+    { file: "tile_r1_c1.jpg", row: 1, col: 1, center_x: 511.5, center_y: 321.0, distance_to_tree: 557.2126524048067 },
+    { file: "tile_r5_c3.jpg", row: 5, col: 3, center_x: 1193.5, center_y: 1177.5, distance_to_tree: 659.9387016988776 },
+    { file: "tile_r5_c2.jpg", row: 5, col: 2, center_x: 852.5, center_y: 1177.5, distance_to_tree: 660.4552142272784 },
+    { file: "tile_r4_c4.jpg", row: 4, col: 4, center_x: 1534.5, center_y: 963.0, distance_to_tree: 663.1690131482321 },
+    { file: "tile_r4_c1.jpg", row: 4, col: 1, center_x: 511.5, center_y: 963.0, distance_to_tree: 664.7098163860678 },
+    { file: "tile_r0_c4.jpg", row: 0, col: 4, center_x: 1534.5, center_y: 107.0, distance_to_tree: 669.2081440030448 },
+    { file: "tile_r0_c1.jpg", row: 0, col: 1, center_x: 511.5, center_y: 107.0, distance_to_tree: 670.7350743773579 },
+    { file: "tile_r5_c4.jpg", row: 5, col: 4, center_x: 1534.5, center_y: 1177.5, distance_to_tree: 816.9449736671376 },
+    { file: "tile_r5_c1.jpg", row: 5, col: 1, center_x: 511.5, center_y: 1177.5, distance_to_tree: 818.196241741552 },
+    { file: "tile_r2_c5.jpg", row: 2, col: 5, center_x: 1876.5, center_y: 535.0, distance_to_tree: 852.5129559132811 },
+    { file: "tile_r2_c0.jpg", row: 2, col: 0, center_x: 170.5, center_y: 535.0, distance_to_tree: 853.5129407337653 },
+    { file: "tile_r3_c5.jpg", row: 3, col: 5, center_x: 1876.5, center_y: 749.0, distance_to_tree: 877.8170310491817 },
+    { file: "tile_r3_c0.jpg", row: 3, col: 0, center_x: 170.5, center_y: 749.0, distance_to_tree: 878.7882224973205 },
+    { file: "tile_r1_c5.jpg", row: 1, col: 5, center_x: 1876.5, center_y: 321.0, distance_to_tree: 880.1056413863054 },
+    { file: "tile_r1_c0.jpg", row: 1, col: 0, center_x: 170.5, center_y: 321.0, distance_to_tree: 881.0743101464257 },
+    { file: "tile_r4_c5.jpg", row: 4, col: 5, center_x: 1876.5, center_y: 963.0, distance_to_tree: 951.808352558434 },
+    { file: "tile_r4_c0.jpg", row: 4, col: 0, center_x: 170.5, center_y: 963.0, distance_to_tree: 952.7041198609356 },
+    { file: "tile_r0_c5.jpg", row: 0, col: 5, center_x: 1876.5, center_y: 107.0, distance_to_tree: 956.0259096907363 },
+    { file: "tile_r0_c0.jpg", row: 0, col: 0, center_x: 170.5, center_y: 107.0, distance_to_tree: 956.9177289610637 },
+    { file: "tile_r5_c5.jpg", row: 5, col: 5, center_x: 1876.5, center_y: 1177.5, distance_to_tree: 1064.6807455758744 },
+    { file: "tile_r5_c0.jpg", row: 5, col: 0, center_x: 170.5, center_y: 1177.5, distance_to_tree: 1065.4816234923999 },
+  ],
+  contentStages: [
+    {
+      name: "sky",
+      tiles: [
+        "tile_r0_c0.jpg", "tile_r0_c1.jpg", "tile_r0_c2.jpg", "tile_r0_c3.jpg", "tile_r0_c4.jpg", "tile_r0_c5.jpg",
+        "tile_r1_c0.jpg", "tile_r1_c1.jpg", "tile_r1_c4.jpg", "tile_r1_c5.jpg"
+      ]
+    },
+    {
+      name: "ground_environment",
+      tiles: [
+        "tile_r2_c0.jpg", "tile_r2_c1.jpg", "tile_r2_c4.jpg", "tile_r2_c5.jpg",
+        "tile_r3_c0.jpg", "tile_r3_c1.jpg", "tile_r3_c4.jpg", "tile_r3_c5.jpg",
+        "tile_r4_c0.jpg", "tile_r4_c1.jpg", "tile_r4_c2.jpg", "tile_r4_c3.jpg", "tile_r4_c4.jpg", "tile_r4_c5.jpg",
+        "tile_r5_c0.jpg", "tile_r5_c1.jpg", "tile_r5_c2.jpg", "tile_r5_c3.jpg", "tile_r5_c4.jpg", "tile_r5_c5.jpg"
+      ]
+    },
+    {
+      name: "sakura_tree",
+      tiles: [
+        "tile_r1_c2.jpg", "tile_r1_c3.jpg",
+        "tile_r2_c2.jpg", "tile_r2_c3.jpg",
+        "tile_r3_c2.jpg", "tile_r3_c3.jpg"
+      ]
+    }
+  ]
+};
+
+const typedRevealConfig = revealConfig;
 
 // 定义优先加载的图片（樱花树核心区域）
 const PRIORITY_TILES = new Set([
@@ -143,7 +209,7 @@ export default function MaskReveal({
       setIsMobile(window.innerWidth < 768);
     };
     checkMobile();
-    window.addEventListener("resize", checkMobile);
+    window.addEventListener("resize", checkMobile, { passive: true });
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
@@ -159,7 +225,7 @@ export default function MaskReveal({
     return map;
   }, []);
 
-  const totalImages = revealOrder.length + 1;
+  const totalImages = useMemo(() => revealOrder.length + 1, [revealOrder.length]);
 
   const handleImageLoad = () => {
     setImagesLoaded((prev) => {
@@ -195,22 +261,23 @@ export default function MaskReveal({
       },
     });
 
-    Object.keys(stageTiles)
+    const sortedStages = Object.keys(stageTiles)
       .map(Number)
-      .sort((a, b) => a - b)
-      .forEach((stage) => {
-        tl.to(
-          stageTiles[stage],
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power3.out",
-            stagger: 0.03,
-          },
-          stage <= 2 ? 0 : 0.72
-        );
-      });
+      .sort((a, b) => a - b);
+
+    sortedStages.forEach((stage) => {
+      tl.to(
+        stageTiles[stage],
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          stagger: 0.03,
+        },
+        stage <= 2 ? 0 : 0.72
+      );
+    });
 
     return () => {
       tl.kill();

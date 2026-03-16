@@ -5,8 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import logoImage from "@/assets/logo/logo.png";
 import gudupaoLogo from "@/assets/logo/gudupao.png";
+import { memo } from "react";
 
-export function Footer() {
+export const Footer = memo(function Footer() {
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
 
@@ -84,4 +85,4 @@ export function Footer() {
       </div>
     </footer>
   );
-}
+});

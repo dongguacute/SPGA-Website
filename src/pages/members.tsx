@@ -1,14 +1,19 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import Image from "next/image";
+import { memo } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
+  preload: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+  preload: true,
 });
 
 interface Member {
@@ -56,7 +61,7 @@ const players: Member[] = [
   { name: "zintur", role: "玩家", avatar: "https://mc-heads.net/avatar/zintur", isPlayer: true },
 ];
 
-function MemberCard({ member }: { member: Member }) {
+const MemberCard = memo(function MemberCard({ member }: { member: Member }) {
   return (
     <div className="group bg-white/40 dark:bg-zinc-800/60 backdrop-blur-xl rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-white/20 dark:border-zinc-700/50">
       <div className="flex flex-col items-center">
@@ -69,6 +74,7 @@ function MemberCard({ member }: { member: Member }) {
               height={80}
               className="pixelated"
               unoptimized
+              loading="lazy"
             />
           </div>
           {!member.isPlayer && (
@@ -88,7 +94,7 @@ function MemberCard({ member }: { member: Member }) {
       </div>
     </div>
   );
-}
+});
 
 export default function Members() {
   return (

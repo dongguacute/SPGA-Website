@@ -5,10 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 import logoImage from "@/assets/logo/logo.png";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import gsap from "gsap";
 
-export function Navbar() {
+export const Navbar = memo(function Navbar() {
   const navRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLImageElement>(null);
   const linksRef = useRef<HTMLDivElement>(null);
@@ -35,7 +35,7 @@ export function Navbar() {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize, { passive: true });
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -115,15 +115,22 @@ export function Navbar() {
     }
   }, [isInitialized, isScrolled]);
 
-  // 滚动监听
+  // 滚动监听 - 使用 requestAnimationFrame 优化
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const threshold = 100;
-      const newScrolled = scrollY > threshold;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const threshold = 100;
+          const newScrolled = scrollY > threshold;
 
-      if (newScrolled !== isScrolled) {
-        setIsScrolled(newScrolled);
+          if (newScrolled !== isScrolled) {
+            setIsScrolled(newScrolled);
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
@@ -317,4 +324,4 @@ export function Navbar() {
       </div>
     </nav>
   );
-}
+});
