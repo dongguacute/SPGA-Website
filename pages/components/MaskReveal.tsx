@@ -134,6 +134,7 @@ export default function MaskReveal({
   const tilesRef = useRef<Map<string, HTMLDivElement>>(new Map());
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [isReady, setIsReady] = useState(false);
+  const [animationComplete, setAnimationComplete] = useState(false);
 
   const revealOrder = typedRevealConfig.tiles;
 
@@ -177,7 +178,11 @@ export default function MaskReveal({
       stageTiles[stage].push(el);
     });
 
-    const tl = gsap.timeline();
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setAnimationComplete(true);
+      },
+    });
 
     Object.keys(stageTiles)
       .map(Number)
@@ -281,8 +286,8 @@ export default function MaskReveal({
       </div>
 
       {/* 前景内容 */}
-      {children && (
-        <div className="absolute inset-0 z-[3] flex items-center justify-center">
+      {children && animationComplete && (
+        <div className="absolute inset-0 z-[3] flex items-center justify-center animate-[fadeIn_0.8s_ease-out_forwards]">
           {children}
         </div>
       )}
