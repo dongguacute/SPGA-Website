@@ -10,7 +10,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <ThemeProvider>
       <Head>
         <link rel="icon" href="/logo.png" />
-        <title>SPGA</title>
+        <title>SPGA Server</title>
       </Head>
       <Navbar />
       <Component {...pageProps} />
