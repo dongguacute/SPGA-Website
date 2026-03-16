@@ -5,6 +5,7 @@ import revealConfig from "@/assets/home/reveal_config.json";
 
 // 导入背景图片
 import backgroundImage from "@/assets/home/background.jpg";
+import mobileBackground from "@/assets/home/mobile.png";
 
 // 静态导入所有 tile 图片
 import tile_r0_c0 from "@/assets/home/tile_r0_c0.jpg";
@@ -135,6 +136,16 @@ export default function MaskReveal({
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [isReady, setIsReady] = useState(false);
   const [animationComplete, setAnimationComplete] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const revealOrder = typedRevealConfig.tiles;
 
@@ -221,7 +232,7 @@ export default function MaskReveal({
     >
       {/* 背景图片 */}
       <Image
-        src={backgroundImage}
+        src={isMobile ? mobileBackground : backgroundImage}
         alt="background"
         fill
         style={{ objectFit: "cover" }}
@@ -248,42 +259,44 @@ export default function MaskReveal({
         }}
       />
 
-      {/* Tile 网格 */}
-      <div className="absolute inset-0 z-[2] grid grid-cols-6 grid-rows-6">
-        {revealOrder.map((tile) => {
-          const imageName = tile.file.replace(".jpg", "");
-          const imageSrc = tileImages[imageName];
-          const isPriority = getLoadingPriority(tile.file);
-          const shouldPreloadTile = shouldPreload(tile.file);
+      {/* Tile 网格 - 仅在桌面端显示 */}
+      {!isMobile && (
+        <div className="absolute inset-0 z-[2] grid grid-cols-6 grid-rows-6">
+          {revealOrder.map((tile) => {
+            const imageName = tile.file.replace(".jpg", "");
+            const imageSrc = tileImages[imageName];
+            const isPriority = getLoadingPriority(tile.file);
+            const shouldPreloadTile = shouldPreload(tile.file);
 
-          return (
-            <div
-              key={tile.file}
-              ref={setTileRef(tile.file)}
-              className="relative w-full h-full overflow-hidden"
-              style={{
-                gridRow: tile.row + 1,
-                gridColumn: tile.col + 1,
-                opacity: 0,
-                transform: "translateY(40px)",
-              }}
-            >
-              {imageSrc && (
-                <Image
-                  src={imageSrc}
-                  alt={`tile-${tile.row}-${tile.col}`}
-                  fill
-                  style={{ objectFit: "cover" }}
-                  priority={isPriority}
-                  loading={isPriority || shouldPreloadTile ? "eager" : "lazy"}
-                  unoptimized
-                  onLoad={handleImageLoad}
-                />
-              )}
-            </div>
-          );
-        })}
-      </div>
+            return (
+              <div
+                key={tile.file}
+                ref={setTileRef(tile.file)}
+                className="relative w-full h-full overflow-hidden"
+                style={{
+                  gridRow: tile.row + 1,
+                  gridColumn: tile.col + 1,
+                  opacity: 0,
+                  transform: "translateY(40px)",
+                }}
+              >
+                {imageSrc && (
+                  <Image
+                    src={imageSrc}
+                    alt={`tile-${tile.row}-${tile.col}`}
+                    fill
+                    style={{ objectFit: "cover" }}
+                    priority={isPriority}
+                    loading={isPriority || shouldPreloadTile ? "eager" : "lazy"}
+                    unoptimized
+                    onLoad={handleImageLoad}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* 前景内容 */}
       {children && animationComplete && (
