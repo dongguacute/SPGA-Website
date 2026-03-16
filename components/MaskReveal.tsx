@@ -5,7 +5,7 @@ import revealConfig from "@/assets/home/reveal_config.json";
 
 // 导入背景图片
 import backgroundImage from "@/assets/home/background.jpg";
-import mobileBackground from "@/assets/home/mobile.png";
+import mobileBackground from "@/assets/home/mobile.jpg";
 
 // 静态导入所有 tile 图片
 import tile_r0_c0 from "@/assets/home/tile_r0_c0.jpg";
