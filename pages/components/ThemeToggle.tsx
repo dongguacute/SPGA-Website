@@ -1,14 +1,26 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export function ThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   if (!mounted) {
@@ -24,30 +36,68 @@ export function ThemeToggle() {
 
   const isDark = resolvedTheme === "dark";
 
-  const cycleTheme = () => {
-    if (theme === "light") {
-      setTheme("dark");
-    } else if (theme === "dark") {
-      setTheme("system");
-    } else {
-      setTheme("light");
-    }
-  };
+  const options = [
+    { value: "light", label: "浅色", icon: <SunIcon className="w-4 h-4" /> },
+    { value: "dark", label: "深色", icon: <MoonIcon className="w-4 h-4" /> },
+    { value: "system", label: "系统", icon: <SystemIcon className="w-4 h-4" /> },
+  ];
+
+  const currentOption = options.find((opt) => opt.value === theme) || options[2];
 
   return (
-    <button
-      onClick={cycleTheme}
-      className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
-      aria-label="切换主题"
-    >
-      {theme === "system" ? (
-        <SystemIcon className="w-5 h-5 text-zinc-700 dark:text-zinc-300" />
-      ) : isDark ? (
-        <MoonIcon className="w-5 h-5 text-zinc-300" />
-      ) : (
-        <SunIcon className="w-5 h-5 text-zinc-700" />
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors flex items-center gap-1"
+        aria-label="切换主题"
+      >
+        {theme === "system" ? (
+          <SystemIcon className="w-5 h-5 text-zinc-700 dark:text-zinc-300" />
+        ) : isDark ? (
+          <MoonIcon className="w-5 h-5 text-zinc-300" />
+        ) : (
+          <SunIcon className="w-5 h-5 text-zinc-700" />
+        )}
+        <ChevronIcon className={`w-3 h-3 text-zinc-500 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 py-1 w-28 bg-white dark:bg-zinc-800 rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden z-50">
+          {options.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => {
+                setTheme(option.value);
+                setIsOpen(false);
+              }}
+              className={`w-full px-3 py-2 flex items-center gap-2 text-sm transition-colors ${
+                theme === option.value
+                  ? "bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-white"
+                  : "text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700/50"
+              }`}
+            >
+              {option.icon}
+              {option.label}
+            </button>
+          ))}
+        </div>
       )}
-    </button>
+    </div>
+  );
+}
+
+function ChevronIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+      stroke="currentColor"
+      className={className}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+    </svg>
   );
 }
 

@@ -225,8 +225,26 @@ export default function MaskReveal({
         onLoad={handleImageLoad}
       />
 
+      {/* 毛玻璃遮罩层 */}
+      <div
+        className="absolute inset-0 z-[1]"
+        style={{
+          background: "linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0.6) 100%)",
+          backdropFilter: "blur(8px) saturate(150%)",
+          WebkitBackdropFilter: "blur(8px) saturate(150%)",
+        }}
+      />
+      <div
+        className="absolute inset-0 z-[1] hidden dark:block"
+        style={{
+          background: "linear-gradient(180deg, rgba(24, 24, 27, 0.5) 0%, rgba(24, 24, 27, 0.6) 50%, rgba(24, 24, 27, 0.8) 100%)",
+          backdropFilter: "blur(8px) saturate(150%)",
+          WebkitBackdropFilter: "blur(8px) saturate(150%)",
+        }}
+      />
+
       {/* Tile 网格 */}
-      <div className="absolute inset-0 grid grid-cols-6 grid-rows-6">
+      <div className="absolute inset-0 z-[2] grid grid-cols-6 grid-rows-6">
         {revealOrder.map((tile) => {
           const imageName = tile.file.replace(".jpg", "");
           const imageSrc = tileImages[imageName];
@@ -264,7 +282,7 @@ export default function MaskReveal({
 
       {/* 前景内容 */}
       {children && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center">
+        <div className="absolute inset-0 z-[3] flex items-center justify-center">
           {children}
         </div>
       )}
