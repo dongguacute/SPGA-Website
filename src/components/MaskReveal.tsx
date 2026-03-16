@@ -225,7 +225,9 @@ export default function MaskReveal({
     return map;
   }, []);
 
-  const totalImages = useMemo(() => revealOrder.length + 1, [revealOrder.length]);
+  const totalImages = useMemo(() => {
+    return isMobile ? 1 : revealOrder.length + 1;
+  }, [revealOrder.length, isMobile]);
 
   const handleImageLoad = () => {
     setImagesLoaded((prev) => {
@@ -246,7 +248,16 @@ export default function MaskReveal({
   };
 
   useEffect(() => {
-    if (!containerRef.current || !isReady) return;
+    if (!containerRef.current) return;
+
+    // 手机版直接标记为动画完成，显示内容
+    if (isMobile) {
+      setIsReady(true);
+      setAnimationComplete(true);
+      return;
+    }
+
+    if (!isReady) return;
 
     const stageTiles: Record<number, HTMLDivElement[]> = {};
     tilesRef.current.forEach((el, fileName) => {
@@ -282,7 +293,7 @@ export default function MaskReveal({
     return () => {
       tl.kill();
     };
-  }, [tileStageMap, isReady]);
+  }, [tileStageMap, isReady, isMobile]);
 
   const setTileRef = (fileName: string) => (el: HTMLDivElement | null) => {
     if (el) {
