@@ -20,7 +20,7 @@
 }
 
 .dark {
-  --background: #09090b;
+  --background: #27272a;
   --foreground: #fafafa;
   --card: #18181b;
   --card-foreground: #fafafa;
@@ -57,6 +57,26 @@
 
 * {
   border-color: var(--border);
+}
+
+/* 使用系统默认滚动条 */
+::-webkit-scrollbar {
+  width: initial;
+  height: initial;
+}
+
+::-webkit-scrollbar-track {
+  background: initial;
+}
+
+::-webkit-scrollbar-thumb {
+  background: initial;
+  border-radius: initial;
+}
+
+* {
+  scrollbar-width: auto;
+  scrollbar-color: initial;
 }
 
 body {
