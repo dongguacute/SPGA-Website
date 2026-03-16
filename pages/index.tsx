@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import MaskReveal from "@/components/MaskReveal";
-
+import Image from "next/image";
+import logo from "@/assets/logo/logo.png";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -44,9 +45,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-16">
           {/* 左边Logo */}
           <div className="flex-shrink-0">
-            <div className="w-48 h-48 md:w-64 md:h-64 rounded-full bg-gradient-to-br from-[#FFB7C5] to-[#FF9EB3] flex items-center justify-center shadow-2xl">
-              <span className="text-4xl md:text-5xl font-bold text-white">SPGA</span>
-            </div>
+            <Image src={logo} alt="SPGA" width={256} height={256} />
           </div>
           
           {/* 右边文字 */}
