@@ -15,16 +15,28 @@ export function Navbar() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const hasPlayedEntrance = useRef(false);
   const isAnimating = useRef(false);
   const animationTl = useRef<gsap.core.Timeline | null>(null);
 
-  // 初始化时检查滚动位置
+  // 初始化时检查滚动位置和移动端
   useEffect(() => {
     const scrollY = window.scrollY;
     const threshold = 100;
     setIsScrolled(scrollY > threshold);
     setIsInitialized(true);
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
+  // 监听窗口大小变化
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // 入场动画
@@ -126,17 +138,16 @@ export function Navbar() {
 
     if (!nav || !links || !hasPlayedEntrance.current) return;
 
-    // 取消之前的动画
+    if (isMobile) return;
+
     if (animationTl.current) {
       animationTl.current.kill();
     }
 
-    // 创建新的 timeline
     const tl = gsap.timeline();
     animationTl.current = tl;
 
     if (isScrolled) {
-      // 滚动后：缩小导航栏，隐藏中间链接
       tl.to(nav, {
         width: 240,
         maxWidth: 240,
@@ -154,7 +165,6 @@ export function Navbar() {
         0
       );
     } else {
-      // 回到顶部：恢复导航栏
       tl.to(nav, {
         width: "calc(100vw - 2rem)",
         maxWidth: 600,
@@ -172,22 +182,42 @@ export function Navbar() {
         0.15
       );
     }
-  }, [isScrolled]);
+  }, [isScrolled, isMobile]);
 
   const isActive = (path: string) => pathname === path;
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isMobileMenuOpen && navRef.current && !navRef.current.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isMobileMenuOpen]);
 
   return (
     <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50">
       <div
         ref={navRef}
-        className="flex items-center bg-white/40 dark:bg-zinc-800/60 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.5)] rounded-full px-6 py-3"
+        className={`flex items-center bg-white/40 dark:bg-zinc-800/60 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.5)] rounded-full px-8 py-3 transition-all duration-300 ${
+          isMobile ? "w-[99vw]" : ""
+        }`}
         style={{
           backdropFilter: "blur(24px) saturate(180%)",
           WebkitBackdropFilter: "blur(24px) saturate(180%)",
-          width: 180,
         }}
       >
-        <Link href="/" className="block shrink-0">
+        <Link href="/" className="block shrink-0" onClick={closeMobileMenu}>
           <Image
             ref={logoRef}
             src={logoImage}
@@ -196,30 +226,94 @@ export function Navbar() {
           />
         </Link>
 
-        <div ref={linksRef} className="flex-1 flex items-center justify-center gap-6 opacity-0 overflow-hidden">
-          <Link
-            href="/members"
-            className={`text-sm font-medium transition-colors ${
-              isActive("/members")
-                ? "text-zinc-900 dark:text-white"
-                : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white"
-            }`}
-          >
-            成员
-          </Link>
-          <a
-            href="https://space.bilibili.com/642078584"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-medium transition-colors text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white"
-          >
-            联系
-          </a>
-        </div>
+        {isMobile ? (
+          <>
+            <button
+              onClick={toggleMobileMenu}
+              className="flex items-center justify-center w-8 h-8 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white focus:outline-none ml-auto"
+              aria-label="Toggle menu"
+            >
+              <div className="space-y-1.5">
+                <span
+                  className={`block w-6 h-0.5 bg-current transition-all duration-300 ${
+                    isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
+                  }`}
+                />
+                <span
+                  className={`block w-6 h-0.5 bg-current transition-all duration-300 ${
+                    isMobileMenuOpen ? "opacity-0" : ""
+                  }`}
+                />
+                <span
+                  className={`block w-6 h-0.5 bg-current transition-all duration-300 ${
+                    isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
+                  }`}
+                />
+              </div>
+            </button>
 
-        <div className="shrink-0">
-          <ThemeToggle />
-        </div>
+            <div
+              className={`absolute top-full left-4 right-4 mt-2 bg-white/95 dark:bg-zinc-800/95 backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.5)] overflow-hidden transition-all duration-300 ease-out z-50 ${
+                isMobileMenuOpen
+                  ? "opacity-100 scale-100 translate-y-0"
+                  : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
+              }`}
+            >
+              <div className="flex flex-col p-4 gap-3">
+                <Link
+                  href="/members"
+                  className="text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-white py-2 px-3 rounded-lg transition-colors"
+                  onClick={closeMobileMenu}
+                >
+                  成员
+                </Link>
+                <a
+                  href="https://space.bilibili.com/642078584"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-white py-2 px-3 rounded-lg transition-colors"
+                  onClick={closeMobileMenu}
+                >
+                  联系
+                </a>
+              </div>
+            </div>
+
+            <div className="shrink-0 ml-6">
+              <ThemeToggle />
+            </div>
+          </>
+        ) : (
+          <>
+            <div
+              ref={linksRef}
+              className="flex-1 flex items-center justify-center gap-6 opacity-0 overflow-hidden"
+            >
+              <Link
+                href="/members"
+                className={`text-sm font-medium transition-colors ${
+                  isActive("/members")
+                    ? "text-zinc-900 dark:text-white"
+                    : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white"
+                }`}
+              >
+                成员
+              </Link>
+              <a
+                href="https://space.bilibili.com/642078584"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-medium transition-colors text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white"
+              >
+                联系
+              </a>
+            </div>
+
+            <div className="shrink-0">
+              <ThemeToggle />
+            </div>
+          </>
+        )}
       </div>
     </nav>
   );
